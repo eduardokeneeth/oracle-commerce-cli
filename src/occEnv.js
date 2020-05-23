@@ -1,8 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const inquirer = require('inquirer');
-
-const ENVS = ['TEST', 'STAGE', 'PROD', 'NOENV'];
+const { CONSTANTS } = require('./constants');
 
 const Methods = {
   parseToEnvFile: obj => {
@@ -34,7 +33,7 @@ const Methods = {
         type: 'list',
         name: 'selectedEnv',
         message: message || 'Select an environment:',
-        choices: ENVS,
+        choices: CONSTANTS.ENVS,
       }]);
   },
 

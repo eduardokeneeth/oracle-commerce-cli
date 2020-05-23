@@ -4,9 +4,7 @@ require('dotenv').config();
 const program = require('commander');
 const { setup } = require('./src/setup');
 const { occEnv } = require('./src/occEnv');
-const { setup } = require('./src/setup');
-const { occEnv } = require('./src/occEnv');
-const dcu = require('./src/dcu');
+const { dcu } = require('./src/dcu');
 
 program
   .version('0.0.1')
@@ -24,9 +22,17 @@ if (program.start) {
   setup.start();
 }
 
-if (program.refresh)
-  dcu.refresh(program.refresh.replace(/\/$/g, ''));
+if (program.refresh) {
+  dcu.refresh(program.refresh);
+}
 
+if (program.putAll) {
+  dcu.putAll(program.putAll);
+}
+
+if (program.transfer) {
+  dcu.transfer(program.transfer);
+}
 
 if (program.env) {
   switch (program.env) {
@@ -43,8 +49,4 @@ if (program.env) {
       console.log(`Environment: ${env}\nURL: ${url}\nKEY: ${appKey}`);
       break;
   }
-}
-
-if (program.transfer) {
-  setup.transfer(program.transfer.replace(/\/$/g, ''));
 }
