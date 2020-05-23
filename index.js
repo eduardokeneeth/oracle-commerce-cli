@@ -5,17 +5,18 @@ const program = require('commander');
 const { setup } = require('./src/setup');
 const { occEnv } = require('./src/occEnv');
 const { dcu } = require('./src/dcu');
+const { ccw } = require('./src/ccw');
 
 program
-  .version('0.0.1')
-  .description('An application to help you with your daily OCC commands.')
-  .option('-s, --start', 'Start the environment setup')
-  .option('-d, --dev', 'Start watcher + Browsersync')
-  .option('-c, --create <type>', 'Create widget or element')
-  .option('-r, --refresh <path>', 'Refresh path')
-  .option('-p, --putAll <path>', 'Upload the entire path')
-  .option('-e, --env <operation>', 'Start the environment manager')
-  .option('-t, --transfer <path>', 'Transfer all widgets between 2 environments')
+  .version('1.0.0')
+  .description('An application to help you with your daily OCC development.')
+  .option('-s, --start', 'start the environment setup')
+  .option('-d, --dev', 'start watcher + Browsersync')
+  .option('-c, --create <type>', 'create widget or element [widget|element]')
+  .option('-r, --refresh <path>', 'refresh path')
+  .option('-p, --putAll <path>', 'upload the entire path')
+  .option('-e, --env <operation>', 'start the environment manager [change|config|current]')
+  .option('-t, --transfer <path>', 'transfer widgets between current and target environment')
   .parse(process.argv);
 
 if (program.start) {
@@ -32,6 +33,17 @@ if (program.putAll) {
 
 if (program.transfer) {
   dcu.transfer(program.transfer);
+}
+
+if (program.create) {
+  switch (program.create) {
+    case 'widget':
+      ccw.createWidget();
+      break;
+    case 'element':
+      ccw.createElement();
+      break;
+  }
 }
 
 if (program.env) {
