@@ -3,6 +3,7 @@
 require('dotenv').config();
 const program = require('commander');
 const { setup } = require('./src/setup');
+const { dev } = require('./src/dev');
 const { occEnv } = require('./src/occEnv');
 const { dcu } = require('./src/dcu');
 const { ccw } = require('./src/ccw');
@@ -21,6 +22,10 @@ program
 
 if (program.start) {
   setup.start();
+}
+
+if (program.dev) {
+  dev.start();
 }
 
 if (program.refresh) {
