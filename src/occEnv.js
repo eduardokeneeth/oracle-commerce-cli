@@ -3,87 +3,120 @@ const inquirer = require('inquirer');
 
 const ENVS = ['TEST', 'STAGE', 'PROD', 'NOENV'];
 
-function parseToEnvFile (obj) {
-  const keys = Object.keys(obj);
-  let file = '';
-  keys.forEach(item => {
-    file += `
-      ${item}=${obj[item]}
-    `;
-  });
-  return file;
-}
-
-/**
- * Verify if .env file exists
- * @return {boolean}
- */
-exports.hasEnv = () => {
-  return fs.existsSync('.env');
-}
-
-/**
- * Verify if /src folder exists
- * @return {boolean}
- */
-exports.hasSrc = () => {
-  return fs.existsSync('./src');
-}
-
-exports.createSrc = () => {
-  return fs.mkdirSync('./src');
-}
-
-/**
- * Display a list of environments
- */
-exports.selector = () => {
-  return inquirer
-    .prompt([
-      {
-        type: 'list',
-        name: 'selectedEnv',
-        message: 'Select an environment:',
-        choices: ENVS,
-      }
-    ]);
-}
-
-exports.promptEnvInfos = () => {
-  return inquirer
-    .prompt([
-      {
-        name: 'adminUrl',
-        message: 'Admin URL:',
-      },
-      {
-        name: 'appKey',
-        message: 'AppKey:',
-      },
-    ]);
-}
-
-exports.writeEnvFile = keysToUpdate => {
-  const envFile = {
-    ACTIVE_ENV: process.env.ACTIVE_ENV || '',
-    OCC_ADMIN_URL: process.env.OCC_ADMIN_URL || '',
-    OCC_APP_KEY: process.env.OCC_APP_KEY || '',
-    OCC_TEST_ADMIN_URL: process.env.OCC_TEST_ADMIN_URL || '',
-    OCC_TEST_APP_KEY: process.env.OCC_TEST_APP_KEY || '',
-    OCC_STAGE_ADMIN_URL: process.env.OCC_STAGE_ADMIN_URL || '',
-    OCC_STAGE_APP_KEY: process.env.OCC_STAGE_APP_KEY || '',
-    OCC_PROD_ADMIN_URL: process.env.OCC_PROD_ADMIN_URL || '',
-    OCC_PROD_APP_KEY: process.env.OCC_PROD_APP_KEY || '',
-    OCC_NOENV_ADMIN_URL: process.env.OCC_NOENV_ADMIN_URL || '',
-    OCC_NOENV_APP_KEY: process.env.OCC_NOENV_APP_KEY || '',
-  };
-
-  if (keysToUpdate) {
-    const keys = Object.keys(envFile);
+const Methods = {
+  parseToEnvFile: obj => {
+    const keys = Object.keys(obj);
+    let file = '';
     keys.forEach(item => {
-      envFile[item] = keysToUpdate[item] || '';
+      file += `
+        ${item}=${obj[item]}
+      `;
     });
-  }
+    return file;
+  },
 
-  fs.writeFileSync('.env', parseToEnvFile(envFile));
+  hasEnv: () => {
+    return fs.existsSync('.env');
+  },
+
+  hasSrc: () => {
+    return fs.existsSync('./src');
+  },
+
+  createSrc: () => {
+    return fs.mkdirSync('./src');
+  },
+
+  selector: () => {
+    return inquirer
+      .prompt([
+        {
+          type: 'list',
+          name: 'selectedEnv',
+          message: 'Select an environment:',
+          choices: ENVS,
+        }
+      ]);
+  },
+
+  promptEnvInfos: () => {
+    return inquirer
+      .prompt([
+        {
+          name: 'adminUrl',
+          message: 'Admin URL:',
+        },
+        {
+          name: 'appKey',
+          message: 'AppKey:',
+        },
+      ]);
+  },
+
+  set: (environment, adminUrl, appKey) => {
+    const obj = {};
+    obj[`OCC_${environment}_ADMIN_URL`] = adminUrl;
+    obj[`OCC_${environment}_APP_KEY`] = appKey;
+    if (environment === process.env.ACTIVE_ENV) {
+      obj.OCC_ADMIN_URL = adminUrl;
+      obj.OCC_APP_KEY = appKey;
+    }
+    envMethods.writeEnvFile(obj);
+  },
+
+  get: environment => {
+    return {
+      env: environment || process.env.ACTIVE_ENV,
+      url: environment
+        ? process.env[`OCC_${environment}_ADMIN_URL`]
+        : process.env.OCC_ADMIN_URL,
+      appKey: environment
+        ? process.env[`OCC_${environment}_APP_KEY`]
+        : process.env.OCC_APP_KEY,
+    };
+  },
+
+  change: environment => {
+    if (Methods.validate(environment)) {
+      Methods.writeEnvFile({
+        ACTIVE_ENV: environment,
+        OCC_ADMIN_URL: process.env[`OCC_${environment}_ADMIN_URL`],
+        OCC_APP_KEY: process.env[`OCC_${environment}_APP_KEY`],
+      });
+    }
+  },
+
+  validate: environment => {
+    return (
+      process.env[`OCC_${environment}_ADMIN_URL`].length > 0 &&
+      process.env[`OCC_${environment}_APP_KEY`].length > 0
+    );
+  },
+
+  writeEnvFile: keysToUpdate => {
+    const envFile = {
+      ACTIVE_ENV: process.env.ACTIVE_ENV || '',
+      OCC_ADMIN_URL: process.env.OCC_ADMIN_URL || '',
+      OCC_APP_KEY: process.env.OCC_APP_KEY || '',
+      OCC_TEST_ADMIN_URL: process.env.OCC_TEST_ADMIN_URL || '',
+      OCC_TEST_APP_KEY: process.env.OCC_TEST_APP_KEY || '',
+      OCC_STAGE_ADMIN_URL: process.env.OCC_STAGE_ADMIN_URL || '',
+      OCC_STAGE_APP_KEY: process.env.OCC_STAGE_APP_KEY || '',
+      OCC_PROD_ADMIN_URL: process.env.OCC_PROD_ADMIN_URL || '',
+      OCC_PROD_APP_KEY: process.env.OCC_PROD_APP_KEY || '',
+      OCC_NOENV_ADMIN_URL: process.env.OCC_NOENV_ADMIN_URL || '',
+      OCC_NOENV_APP_KEY: process.env.OCC_NOENV_APP_KEY || '',
+    };
+  
+    if (keysToUpdate) {
+      const keys = Object.keys(envFile);
+      keys.forEach(item => {
+        envFile[item] = keysToUpdate[item] || '';
+      });
+    }
+  
+    fs.writeFileSync('.env', Methods.parseToEnvFile(envFile));
+  }
 }
+
+exports.occEnv = Methods;
