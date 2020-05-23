@@ -3,17 +3,21 @@ const shell = require('shelljs');
 const { CONSTANTS } = require('./constants');
 const { occEnv } = require('./occEnv');
 
-const DCU_BASE_COMMAND = `npm run dcu -- -b ${CONSTANTS.PATHS.SRC} -n ${process.env.OCC_ADMIN_URL} -k ${process.env.OCC_APP_KEY}`;
+const DCU_BASE_COMMAND = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${process.env.OCC_ADMIN_URL} -k ${process.env.OCC_APP_KEY}`;
 
 const Methods =  {
     grab: (adminUrl, appKey) => {
         var finalShellScript = DCU_BASE_COMMAND;
         if (adminUrl && appKey) {
-            finalShellScript = `npm run dcu -- -b ${CONSTANTS.PATHS.SRC} -n ${adminUrl} -k ${appKey} -c -g`
+            finalShellScript = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${adminUrl} -k ${appKey} -c -g`
         }
         shell.exec(finalShellScript, {
             async: true
         });
+    },
+
+    put: (file) => {
+        shell.exec(`${DCU_BASE_COMMAND} -t "${file}"`);
     },
 
     refresh: path => {
@@ -23,9 +27,7 @@ const Methods =  {
     },
     
     putAll: path => {
-        shell.exec(`${DCU_BASE_COMMAND} -m "${path.replace(/\/$/g, '')}"`, {
-            async: true,
-        });
+        shell.exec(`${DCU_BASE_COMMAND} -m "${path.replace(/\/$/g, '')}"`);
     },
 
     transfer: async path => {
