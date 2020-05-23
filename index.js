@@ -2,8 +2,13 @@
 
 const program = require('commander');
 require('dotenv').config();
-const { setup } = require('./src/setup');
-const { occEnv } = require('./src/occEnv');
+const {
+  setup
+} = require('./src/setup');
+const {
+  occEnv
+} = require('./src/occEnv');
+const dcu = require('./src/dcu');
 
 program
   .version('0.0.1')
@@ -14,11 +19,16 @@ program
   .option('-r, --refresh <path>', 'Refresh path')
   .option('-p, --putAll <path>', 'Upload the entire path')
   .option('-e, --env <operation>', 'Start the environment manager')
+  .option('-t, --transfer <path>', 'Transfer all widgets between 2 environments')
   .parse(process.argv);
 
 if (program.start) {
   setup.start();
 }
+
+if (program.refresh)
+  dcu.refresh(program.refresh.replace(/\/$/g, ''));
+
 
 if (program.env) {
   switch (program.env) {
@@ -26,7 +36,9 @@ if (program.env) {
       break;
     case 'change':
       (async () => {
-        const { selectedEnv } = await occEnv.selector();
+        const {
+          selectedEnv
+        } = await occEnv.selector();
         if (occEnv.validate(selectedEnv)) {
           occEnv.change(selectedEnv);
         } else {
@@ -35,8 +47,14 @@ if (program.env) {
       })();
       break;
     case 'current':
-      const { env, url, appKey} = occEnv.get();
+      const {
+        env, url, appKey
+      } = occEnv.get();
       console.log(`Environment: ${env}\nURL: ${url}\nKEY: ${appKey}`);
       break;
   }
+}
+
+if (program.transfer) {
+  setup.transfer(program.transfer.replace(/\/$/g, ''));
 }

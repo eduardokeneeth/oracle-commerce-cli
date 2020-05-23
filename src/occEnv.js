@@ -27,22 +27,19 @@ const Methods = {
     return fs.mkdirSync('./src');
   },
 
-  selector: () => {
+  selector: message => {
     return inquirer
-      .prompt([
-        {
-          type: 'list',
-          name: 'selectedEnv',
-          message: 'Select an environment:',
-          choices: ENVS,
-        }
-      ]);
+      .prompt([{
+        type: 'list',
+        name: 'selectedEnv',
+        message: message || 'Select an environment:',
+        choices: ENVS,
+      }]);
   },
 
   promptEnvInfos: () => {
     return inquirer
-      .prompt([
-        {
+      .prompt([{
           name: 'adminUrl',
           message: 'Admin URL:',
         },
@@ -61,18 +58,16 @@ const Methods = {
       obj.OCC_ADMIN_URL = adminUrl;
       obj.OCC_APP_KEY = appKey;
     }
-    envMethods.writeEnvFile(obj);
+    Methods.writeEnvFile(obj);
   },
 
   get: environment => {
     return {
       env: environment || process.env.ACTIVE_ENV,
-      url: environment
-        ? process.env[`OCC_${environment}_ADMIN_URL`]
-        : process.env.OCC_ADMIN_URL,
-      appKey: environment
-        ? process.env[`OCC_${environment}_APP_KEY`]
-        : process.env.OCC_APP_KEY,
+      url: environment ?
+        process.env[`OCC_${environment}_ADMIN_URL`] : process.env.OCC_ADMIN_URL,
+      appKey: environment ?
+        process.env[`OCC_${environment}_APP_KEY`] : process.env.OCC_APP_KEY,
     };
   },
 
@@ -107,14 +102,14 @@ const Methods = {
       OCC_NOENV_ADMIN_URL: process.env.OCC_NOENV_ADMIN_URL || '',
       OCC_NOENV_APP_KEY: process.env.OCC_NOENV_APP_KEY || '',
     };
-  
+
     if (keysToUpdate) {
       const keys = Object.keys(envFile);
       keys.forEach(item => {
         envFile[item] = keysToUpdate[item] || '';
       });
     }
-  
+
     fs.writeFileSync('.env', Methods.parseToEnvFile(envFile));
   }
 }
