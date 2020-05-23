@@ -22,6 +22,7 @@ const Methods = {
   watchLess: () => {
     const watcher = chokidar.watch([`${CONSTANTS.PATHS.SRC}/**/*.less`]);
     watcher.on('change', file => {
+      console.log(`A change was detected, uploading: ${file}`);
       dcu.put(Methods.fixPath(file));
       browserSync.reload();
     });
@@ -30,6 +31,7 @@ const Methods = {
   watchJs: () => {
     const watcher = chokidar.watch([`${CONSTANTS.PATHS.SRC}/**/*.js`]);
     watcher.on('change', file => {
+      console.log(`A change was detected, uploading: ${file}`);
       if (file.indexOf('/module/') !== -1) {
         dcu.putAll(Methods.fixPath(file).split('/js/')[0]);
       } else {
@@ -42,6 +44,7 @@ const Methods = {
   watchHtml: () => {
     const watcher = chokidar.watch([`${CONSTANTS.PATHS.SRC}/**/*.template`]);
     watcher.on('change', file => {
+      console.log(`A change was detected, uploading: ${file}`);
       dcu.put(fixPath(file));
       browserSync.reload();
     });
@@ -50,6 +53,7 @@ const Methods = {
   watchJson: () => {
     const watcher = chokidar.watch([`${CONSTANTS.PATHS.SRC}/**/*.json`]);
     watcher.on('change', file => {
+      console.log(`A change was detected, uploading: ${file}`);
       dcu.put(fixPath(file));
       browserSync.reload();
     });
