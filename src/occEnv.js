@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const inquirer = require('inquirer');
 
@@ -57,11 +58,13 @@ const Methods = {
     const obj = {};
     obj[`OCC_${environment}_ADMIN_URL`] = adminUrl;
     obj[`OCC_${environment}_APP_KEY`] = appKey;
+
     if (environment === process.env.ACTIVE_ENV) {
       obj.OCC_ADMIN_URL = adminUrl;
       obj.OCC_APP_KEY = appKey;
     }
-    envMethods.writeEnvFile(obj);
+
+    Methods.writeEnvFile(obj);
   },
 
   get: environment => {
@@ -76,13 +79,38 @@ const Methods = {
     };
   },
 
-  change: environment => {
+  change: async environment => {
+    if (!environment) {
+      var { selectedEnv } = await Methods.selector();
+      environment = selectedEnv;
+    }
+    
     if (Methods.validate(environment)) {
       Methods.writeEnvFile({
         ACTIVE_ENV: environment,
         OCC_ADMIN_URL: process.env[`OCC_${environment}_ADMIN_URL`],
         OCC_APP_KEY: process.env[`OCC_${environment}_APP_KEY`],
       });
+    } else {
+      console.log('This environment is not configured.');
+    }
+  },
+
+  config: async () => {
+    const { selectedEnv } = await Methods.selector();
+    if (Methods.validate(selectedEnv)) {
+      const { needToUpdate } = await inquirer.prompt({
+        type: 'confirm',
+        name: 'needToUpdate',
+        message: `${selectedEnv} is ready. Do you want to update?`,
+      });
+      if (needToUpdate) {
+        const { adminUrl, appKey } = await Methods.promptEnvInfos();
+        Methods.set(selectedEnv, adminUrl, appKey);
+      }
+    } else {
+      const { adminUrl, appKey } = await Methods.promptEnvInfos();
+      Methods.set(selectedEnv, adminUrl, appKey);
     }
   },
 
@@ -111,7 +139,7 @@ const Methods = {
     if (keysToUpdate) {
       const keys = Object.keys(envFile);
       keys.forEach(item => {
-        envFile[item] = keysToUpdate[item] || '';
+        envFile[item] = keysToUpdate[item] ? keysToUpdate[item] : process.env[item] || '';
       });
     }
   
