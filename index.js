@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const program = require('commander');
 require('dotenv').config();
+const program = require('commander');
 const { setup } = require('./src/setup');
 const { occEnv } = require('./src/occEnv');
 
@@ -23,16 +23,10 @@ if (program.start) {
 if (program.env) {
   switch (program.env) {
     case 'config':
+      occEnv.config();
       break;
     case 'change':
-      (async () => {
-        const { selectedEnv } = await occEnv.selector();
-        if (occEnv.validate(selectedEnv)) {
-          occEnv.change(selectedEnv);
-        } else {
-          console.log('This environment is not configured.');
-        }
-      })();
+      occEnv.change();
       break;
     case 'current':
       const { env, url, appKey} = occEnv.get();
