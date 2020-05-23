@@ -1,0 +1,20 @@
+{
+  "name": "occ-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "occ": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eduardo Keneeth",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^5.1.0",
+    "dotenv": "^8.2.0",
+    "inquirer": "^7.1.0",
+    "shelljs": "^0.8.4"
+  }
+}
