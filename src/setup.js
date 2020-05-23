@@ -1,13 +1,20 @@
 const fs = require('fs');
-const { occEnv } = require('./occEnv');
+const {
+  occEnv
+} = require('./occEnv');
 const dcu = require('./dcu');
 
 const Methods = {
   start: async () => {
     if (!occEnv.hasEnv()) {
-      const { selectedEnv } = await occEnv.selector();
-      const { adminUrl, appKey } = await occEnv.promptEnvInfos();
-  
+      const {
+        selectedEnv
+      } = await occEnv.selector();
+      const {
+        adminUrl,
+        appKey
+      } = await occEnv.promptEnvInfos();
+
       const envFile = {
         ACTIVE_ENV: selectedEnv,
         OCC_ADMIN_URL: adminUrl,
@@ -15,9 +22,9 @@ const Methods = {
       };
       envFile[`OCC_${selectedEnv}_ADMIN_URL`] = adminUrl;
       envFile[`OCC_${selectedEnv}_APP_KEY`] = appKey;
-  
+
       occEnv.writeEnvFile(envFile);
-  
+
       if (!occEnv.hasSrc()) {
         console.log('Creating src folder...');
         occEnv.createSrc();
@@ -28,6 +35,22 @@ const Methods = {
       }
     } else {
       console.log('.env found, delete it and try again.');
+    }
+  },
+
+  transfer: async (path) => {
+    const {
+      selectedEnv
+    } = await occEnv.selector("Select an environment to transfer:");
+    if (occEnv.validate(selectedEnv)) {
+      const {
+        url,
+        appKey
+      } = occEnv.get(selectedEnv);
+      dcu.transfer(path, url, appKey);
+    } else {
+      occEnv.set(selectedEnv, );
+      dcu.transfer(path, url, appKey);
     }
   }
 }
