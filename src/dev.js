@@ -67,6 +67,11 @@ const Methods = {
         domain: `localhost:${bsPort}`,
       },
       port: bsPort,
+      callbacks: {
+        ready: function(err, bs) {
+            console.log('Watching for changes...');
+        }
+    }
     };
     browserSync.init(browserSyncConfig);
   }
