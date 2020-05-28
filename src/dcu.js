@@ -7,7 +7,7 @@ const DCU_BASE_COMMAND = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} 
 
 const Methods =  {
     grab: (adminUrl, appKey) => {
-        var finalShellScript = DCU_BASE_COMMAND;
+        var finalShellScript = `${DCU_BASE_COMMAND} -g -c`;
         if (adminUrl && appKey) {
             finalShellScript = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${adminUrl} -k ${appKey} -c -g`
         }

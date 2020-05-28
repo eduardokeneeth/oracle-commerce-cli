@@ -45,7 +45,7 @@ const Methods = {
     const watcher = chokidar.watch([`${CONSTANTS.PATHS.SRC}/**/*.template`]);
     watcher.on('change', file => {
       console.log(`A change was detected, uploading: ${file}`);
-      dcu.put(fixPath(file));
+      dcu.put(Methods.fixPath(file));
       browserSync.reload();
     });
   },
@@ -54,7 +54,7 @@ const Methods = {
     const watcher = chokidar.watch([`${CONSTANTS.PATHS.SRC}/**/*.json`]);
     watcher.on('change', file => {
       console.log(`A change was detected, uploading: ${file}`);
-      dcu.put(fixPath(file));
+      dcu.put(Methods.fixPath(file));
       browserSync.reload();
     });
   },
@@ -71,7 +71,7 @@ const Methods = {
         ready: function(err, bs) {
             console.log('Watching for changes...');
         }
-    }
+      }
     };
     browserSync.init(browserSyncConfig);
   }

@@ -18,6 +18,7 @@ program
   .option('-p, --putAll <path>', 'upload the entire path')
   .option('-e, --env <operation>', 'start the environment manager [change|config|current]')
   .option('-t, --transfer <path>', 'transfer widgets between current and target environment')
+  .option('-g, --grab', 'start grab on the current environment.')
   .parse(process.argv);
 
 if (program.start) {
@@ -26,6 +27,10 @@ if (program.start) {
 
 if (program.dev) {
   dev.start();
+}
+
+if(program.grab) {
+  dcu.grab();
 }
 
 if (program.refresh) {
