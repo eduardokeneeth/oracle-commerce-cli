@@ -1,6 +1,6 @@
 {
-  "name": "occ-cli",
-  "version": "1.0.0",
+  "name": "oracle-commerce-cli",
+  "version": "1.0.1",
   "description": "A simple CLI to help with your daily OCC development.",
   "main": "index.js",
   "bin": {
@@ -8,8 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/eduardokeneeth/occ-cli"
+    "url": "https://github.com/eduardokeneeth/oracle-commerce-cli"
   },
+  "keywords": [
+    "oracle-commerce-cli",
+    "oracle-commerce-cloud",
+    "occ",
+    "cli"
+  ],
   "license": "MIT",
   "dependencies": {
     "browser-sync": "^2.26.7",
