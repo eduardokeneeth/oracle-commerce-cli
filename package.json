@@ -1,16 +1,16 @@
 {
   "name": "occ-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple CLI to help with your daily OCC development.",
   "main": "index.js",
   "bin": {
     "occ": "./index.js"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eduardokeneeth/occ-cli"
   },
-  "author": "Eduardo Keneeth",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "browser-sync": "^2.26.7",
     "chokidar": "^3.4.0",

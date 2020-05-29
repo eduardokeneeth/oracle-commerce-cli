@@ -17,7 +17,9 @@ const Methods =  {
     },
 
     put: (file) => {
-        shell.exec(`${DCU_BASE_COMMAND} -t "${file}"`);
+        shell.exec(`${DCU_BASE_COMMAND} -t "${file}"`, {
+            async: true,
+        });
     },
 
     refresh: path => {
@@ -27,7 +29,9 @@ const Methods =  {
     },
     
     putAll: path => {
-        shell.exec(`${DCU_BASE_COMMAND} -m "${path.replace(/\/$/g, '')}"`);
+        shell.exec(`${DCU_BASE_COMMAND} -m "${path.replace(/\/$/g, '')}"`, {
+            async: true,
+        });
     },
 
     transfer: async path => {
@@ -36,7 +40,9 @@ const Methods =  {
         if (occEnv.validate(selectedEnv)) {
             const { url, appKey } = occEnv.get(selectedEnv);
             finalShellScript = `npm run dcu -- -b ${CONSTANTS.PATHS.SRC} -n ${url} -k ${appKey} -x "${path}" -o`;
-            shell.exec(finalShellScript, { async: true });
+            shell.exec(finalShellScript, {
+                async: true,
+            });
         } else {
             console.log(`${selectedEnv} is not configured.`);
         }
