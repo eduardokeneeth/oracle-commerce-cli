@@ -12,25 +12,25 @@ const Methods =  {
             finalShellScript = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${adminUrl} -k ${appKey} -c -g`
         }
         shell.exec(finalShellScript, {
-            async: true
+            async: false
         });
     },
 
     put: (file) => {
         shell.exec(`${DCU_BASE_COMMAND} -t "${file}"`, {
-            async: true,
+            async: false,
         });
     },
 
     refresh: path => {
         shell.exec(`${DCU_BASE_COMMAND} -e "${path.replace(/\/$/g, '')}"`, {
-            async: true,
+            async: false,
         });
     },
     
     putAll: path => {
         shell.exec(`${DCU_BASE_COMMAND} -m "${path.replace(/\/$/g, '')}"`, {
-            async: true,
+            async: false,
         });
     },
 
@@ -41,7 +41,7 @@ const Methods =  {
             const { url, appKey } = occEnv.get(selectedEnv);
             finalShellScript = `npm run dcu -- -b ${CONSTANTS.PATHS.SRC} -n ${url} -k ${appKey} -x "${path}" -o`;
             shell.exec(finalShellScript, {
-                async: true,
+                async: false,
             });
         } else {
             console.log(`${selectedEnv} is not configured.`);
