@@ -9,7 +9,7 @@ const { dcu } = require('./src/dcu');
 const { ccw } = require('./src/ccw');
 
 program
-  .version('1.0.4')
+  .version(require('./package.json').version)
   .description('An application to help you with your daily OCC development.')
   .option('-s, --start', 'start the environment setup')
   .option('-d, --dev', 'start watcher + Browsersync')
