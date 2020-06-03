@@ -2,6 +2,8 @@
 
 A simple CLI to help with your daily OCC development.
 
+![npm](https://img.shields.io/npm/dt/oracle-commerce-cli?style=flat-square)
+
 ## Prerequisites
 - Your project shoud follow [this structure](https://github.com/eduardokeneeth/oracle-commerce-project-example).
 
