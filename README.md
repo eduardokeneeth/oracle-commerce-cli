@@ -1,8 +1,10 @@
 # Oracle Commerce Cloud CLI
 
-A simple CLI to help with your daily OCC development.
+[![GitHub contributors](https://img.shields.io/github/contributors/eduardokeneeth/oracle-commerce-cli?style=flat-square)](https://github.com/eduardokeneeth/oracle-commerce-cli/graphs/contributors)
+[![npm](https://img.shields.io/npm/v/oracle-commerce-cli?label=last%20version&style=flat-square)](https://www.npmjs.com/package/oracle-commerce-cli)
+[![npm](https://img.shields.io/npm/dt/oracle-commerce-cli?style=flat-square)](https://www.npmjs.com/package/oracle-commerce-cli)
 
-![npm](https://img.shields.io/npm/dt/oracle-commerce-cli?style=flat-square)
+A simple CLI to help with your daily OCC development.
 
 ## Prerequisites
 - Your project shoud follow [this structure](https://github.com/eduardokeneeth/oracle-commerce-project-example).
