@@ -3,7 +3,7 @@
 A simple CLI to help with your daily OCC development.
 
 ## Prerequisites
-- Your project shoud follow [this structure](link).
+- Your project shoud follow [this structure](https://github.com/eduardokeneeth/oracle-commerce-project-example).
 
 # Installation
 ```sh
@@ -26,14 +26,14 @@ After this you can use everything on this CLI.
 
 # Options
 
-The following table describes the options you can use with the `occ`.
+The following table describes the options you can use with `occ`.
 
 |Option|Description|
 |:---|:---|
 | `-h, --help` | Provides usage information for the CLI |
 | `-V, --version` | Provides the CLI's version |
 | `-s, --start` | Starts the project setup |
-| `-d, --dev` | Starts Watcher + Browsersync. <br><br> **Note:** [Click here](link) to see how configure Browsersync. |
+| `-d, --dev` | Starts Watcher + Browsersync. <br><br> **Note:** [Click here](https://github.com/eduardokeneeth/oracle-commerce-project-example#browsersync) to see how configure Browsersync. |
 | `-c, --create <type>` | Creates widget or element. <br><br> **Options:** `widget`, `element`. |
 | `-r, --refresh <path>` | Refreshes content from the Commerce instance within the specified directory. |
 | `-p, --putAll <path>` | Sends everything from the specified directory. |
