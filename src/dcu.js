@@ -38,8 +38,8 @@ const Methods =  {
         const { selectedEnv } = await occEnv.selector("Select an environment to transfer:");
     
         if (occEnv.validate(selectedEnv)) {
-            const { url, appKey } = occEnv.get(selectedEnv);
-            finalShellScript = `npm run dcu -- -b ${CONSTANTS.PATHS.SRC} -n ${url} -k ${appKey} -x "${path}" -o`;
+            const { adminUrl, appKey } = occEnv.get(selectedEnv);
+            finalShellScript = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${adminUrl} -k ${appKey} -x "${path}" -o`;
             shell.exec(finalShellScript, {
                 async: false,
             });
