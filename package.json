@@ -1,6 +1,6 @@
 {
   "name": "oracle-commerce-cli",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A simple CLI to help with your daily OCC development.",
   "main": "index.js",
   "bin": {
