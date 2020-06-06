@@ -28,6 +28,8 @@ Your project is ready!
 
 After this you can use everything on this CLI. 
 
+**Note:** You only need to do this once, after that if you need to update, change or configure an environment, please use the Environment Manager (`occ --env <operation>`).
+
 # Options
 
 The following table describes the options you can use with `occ`.
