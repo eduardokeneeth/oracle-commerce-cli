@@ -23,52 +23,56 @@ program
 
 if (program.start) {
   setup.start();
-}
-
-if (program.dev) {
-  dev.start();
-}
-
-if(program.grab) {
-  dcu.grab();
-}
-
-if (program.refresh) {
-  dcu.refresh(program.refresh);
-}
-
-if (program.putAll) {
-  dcu.putAll(program.putAll);
-}
-
-if (program.transfer) {
-  dcu.transfer(program.transfer);
-}
-
-if (program.create) {
-  switch (program.create) {
-    case 'widget':
-      ccw.createWidget();
-      break;
-    case 'element':
-      ccw.createElement();
-      break;
-  }
-}
-
-if (program.env) {
-  switch (program.env) {
-    case 'config':
-      occEnv.config();
-      break;
-    case 'change':
-      occEnv.change();
-      break;
-    case 'current':
-      const {
-        env, url, appKey
-      } = occEnv.get();
-      console.log(`Environment: ${env}\nURL: ${url}\nKEY: ${appKey}`);
-      break;
+} else {
+  if (occEnv.validate()) {
+    if (program.dev) {
+      dev.start();
+    }
+    
+    if(program.grab) {
+      dcu.grab();
+    }
+    
+    if (program.refresh) {
+      dcu.refresh(program.refresh);
+    }
+    
+    if (program.putAll) {
+      dcu.putAll(program.putAll);
+    }
+    
+    if (program.transfer) {
+      dcu.transfer(program.transfer);
+    }
+    
+    if (program.create) {
+      switch (program.create) {
+        case 'widget':
+          ccw.createWidget();
+          break;
+        case 'element':
+          ccw.createElement();
+          break;
+      }
+    }
+    
+    if (program.env) {
+      switch (program.env) {
+        case 'config':
+          occEnv.config();
+          break;
+        case 'change':
+          occEnv.change();
+          break;
+        case 'current':
+          const {
+            env, url, appKey
+          } = occEnv.get();
+          console.log(`Environment: ${env}\nURL: ${url}\nKEY: ${appKey}`);
+          break;
+      }
+    }
+  } else {
+    console.log('You need to start the project first.');
   }
 }

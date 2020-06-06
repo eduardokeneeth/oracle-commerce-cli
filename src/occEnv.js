@@ -108,10 +108,21 @@ const Methods = {
   },
 
   validate: environment => {
-    return (
-      process.env[`OCC_${environment}_ADMIN_URL`].length > 0 &&
-      process.env[`OCC_${environment}_APP_KEY`].length > 0
-    );
+    if (Methods.hasEnv()) {
+      if (environment) {
+        return (
+          process.env[`OCC_${environment}_ADMIN_URL`].length > 0 &&
+          process.env[`OCC_${environment}_APP_KEY`].length > 0
+        );
+      } else {
+        return (
+          process.env.OCC_ADMIN_URL.length > 0 &&
+          process.env.OCC_APP_KEY.length > 0
+        );
+      }
+    } else {
+      return false;
+    }
   },
 
   writeEnvFile: keysToUpdate => {
