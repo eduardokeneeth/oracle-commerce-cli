@@ -7,6 +7,7 @@ const { dev } = require('./src/dev');
 const { occEnv } = require('./src/occEnv');
 const { dcu } = require('./src/dcu');
 const { ccw } = require('./src/ccw');
+const { sse } = require('./src/sse');
 
 program
   .version(require('./package.json').version)
@@ -18,6 +19,7 @@ program
   .option('-p, --putAll <path>', 'upload the entire path')
   .option('-e, --env <operation>', 'start the environment manager [change|config|current]')
   .option('-t, --transfer <path>', 'transfer widgets between current and target environment')
+  .option('-x, --sse <operation>', 'transfer SSE between current and target environment')
   .option('-g, --grab', 'start grab on the current environment.')
   .parse(process.argv);
 
@@ -43,6 +45,14 @@ if (program.start) {
     
     if (program.transfer) {
       dcu.transfer(program.transfer);
+    }
+
+    if (program.sse) {
+      switch (program.sse) {
+        case 'download':
+          sse.download();
+          break;
+      }
     }
     
     if (program.create) {
