@@ -23,6 +23,7 @@
     "chokidar": "^3.4.0",
     "commander": "^5.1.0",
     "dotenv": "^8.2.0",
+    "extract-zip": "^2.0.1",
     "inquirer": "^7.1.0",
     "inquirer-search-list": "^1.2.6",
     "qs": "^6.9.4",
