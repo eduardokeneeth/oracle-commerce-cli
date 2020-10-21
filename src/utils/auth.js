@@ -4,7 +4,7 @@ const { ccAdminApi } = require('./../services/cc-admin');
 const { CONSTANTS } = require('./../constants');
 
 const Methods = {
-    login: async (env) => {
+    login: async env => {
         env = env || process.env.ACTIVE_ENV;
 
         const data = qs.stringify({
