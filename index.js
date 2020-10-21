@@ -52,6 +52,12 @@ if (program.start) {
         case 'download':
           sse.download();
           break;
+        case 'upload':
+          sse.upload();
+          break;
+        case 'transfer':
+          sse.transfer();
+          break;
       }
     }
     
