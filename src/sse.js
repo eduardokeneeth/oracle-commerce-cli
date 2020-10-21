@@ -54,10 +54,13 @@ const Methods = {
             .map(dirent => dirent.name);
     },
 
-    get: async (sse, env, backup) => {
+    get: async (sse, backup, env) => {
         env = env || process.env.ACTIVE_ENV;
+        
         if (sse) {
+            sse = sse.indexOf('.zip') !== -1 ? sse : `${sse}.zip`;
             const token = await auth.login(env);
+
             const response = await ccAdminApi[env].get(`${CONSTANTS.ENDPOINT.SSE_LIST}/${sse}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -88,34 +91,24 @@ const Methods = {
             });
 
             if (backup) {
-                const writerBackup =  fs.createWriteStream(`${CONSTANTS.PATHS.SSE}/${env}-${+new Date()}_${sse}`);
-                await new Promise((resolve, reject) => {
-                    response.data.pipe(writerBackup);
-                    let error = null;
-                    writerBackup.on('error', err => {
-                        error = err;
-                        console.log('Backup not completed.');
-                        writerBackup.close();
-                        reject(err);
-                    });
-                    writerBackup.on('close', async () => {
-                        if (!error) {
-                            resolve(true);
-                        }
-                    });
-                });
+                const date = new Date();
+                const timestamp = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}-${date.toISOString().substr(11, 8).replace(/\:/g, '')}`;
+                fs.copyFileSync(`${CONSTANTS.PATHS.SSE}/${sse}`, `${CONSTANTS.PATHS.SSE}/BKP-${env}-${timestamp}_${sse}`); 
             }
-            
         } else {
             console.log('SSE required to download.')
         }
     },
 
     delete: sse => {
-        if (sse) {
-            fs.unlinkSync(`${CONSTANTS.PATHS.SSE}/${sse}`);
+        if (sse.indexOf('.zip') !== -1) {
+            if (sse) {
+                fs.unlinkSync(`${CONSTANTS.PATHS.SSE}/${sse}`);
+            } else {
+                console.log('SSE required to delete.')
+            }
         } else {
-            console.log('SSE required to delete.')
+            console.log('occ CLI only deletes .zip files.');
         }
     },
 
@@ -158,22 +151,40 @@ const Methods = {
         Methods.delete(sse);
     },
 
-    upload: async sse => {
+    upload: async (sse, env) => {
+        env = env || process.env.ACTIVE_ENV;
+        const sseType = sse && sse.indexOf('.zip') !== -1 ? 'zip' : 'folder';
+
         if (!sse) {
             const { selectedSSE } = await Methods.selector('local');
             sse = selectedSSE;
         }
 
-        if (sse.indexOf('.zip') === -1) {
+        console.log(`Making a backup copy for ${sse} from ${env}...`);
+        await Methods.get(sseType === 'zip' ? sse : `${sse}.zip`, true, env);
+
+        if (sseType === 'folder') {
             console.log(`Zipping ${sse}...`);
             await Methods.zip(sse);
+            sse = `${sse}.zip`;
         }
 
+        console.log(`Uploading ${sse} to ${env}...`);
+        const token = await auth.login(env);
         const data = new FormData();
-        data.append('fileUpload', fs.createReadStream(`${CONSTANTS.PATHS.SSE}/${sse}.zip`));
+        data.append('fileUpload', fs.createReadStream(`${CONSTANTS.PATHS.SSE}/${sse}`));
+        data.append('filename', sse);
+        data.append('uploadType', 'extensions');
+        data.append('force', 'true');
+        
+        console.log(data.getHeaders());
+        // ccAdminApi[env].post(CONSTANTS.ENDPOINT.SSE_UPLOAD, data, {
+        //     headers: {
+        //         Authorization: `Bearer ${token}`,
+        //     }
+        // });
 
-        console.log(data);
-
+        Methods.delete(`${sse}`);
     },
 
     transfer: async (sse, targetEnv) => {
@@ -198,8 +209,7 @@ const Methods = {
                 if (confirm) {
                     console.log(`Downloading ${sse} from ${process.env.ACTIVE_ENV}...`);
                     await Methods.get(sse);
-                    console.log(`Downloading ${sse} from ${targetEnv}...`);
-                    await Methods.get(sse, targetEnv, true);
+                    await Methods.upload(sse, targetEnv);
                 }
                 
             } else {
