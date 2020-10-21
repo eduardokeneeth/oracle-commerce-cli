@@ -9,5 +9,6 @@ exports.CONSTANTS = {
     ENDPOINT: {
         LOGIN: '/login',
         SSE_LIST: '/serverExtensions',
+        SSE_UPLOAD: '/serverExtensions',
     }
 }
