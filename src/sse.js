@@ -22,11 +22,18 @@ const Methods = {
     },
 
     selector: async type => {
+        const choices = type === 'server' ? await Methods.list() : Methods.listLocal();
+
+        if (!choices.length) {
+            console.log(`Can't found server side extensions. Please check your ${CONSTANTS.PATHS.SSE} folder or your ${process.env.ACTIVE_ENV} environment.`);
+            return false;
+        }
+
         return inquirer.prompt([{
             type: 'search-list',
             name: 'selectedSSE',
             message: 'Select a SSE:',
-            choices: type === 'server' ? await Methods.list() : Methods.listLocal(),
+            choices
         }]);
     },
 
@@ -66,35 +73,46 @@ const Methods = {
                     Authorization: `Bearer ${token}`,
                 },
                 responseType: 'stream',
-            });
-            
-            if (!Methods.hasFolder()) {
-                Methods.createFolder();
-            }
-
-            const writer = fs.createWriteStream(`${CONSTANTS.PATHS.SSE}/${sse}`);
-            
-            await new Promise((resolve, reject) => {
-                response.data.pipe(writer);
-                let error = null;
-                writer.on('error', err => {
-                    error = err;
-                    console.log('Download not completed. Please try again.');
-                    writer.close();
-                    reject(err);
-                });
-                writer.on('close', async () => {
-                    if (!error) {
-                        resolve(true);
+            }).catch(err => {
+                if (err.response.status === 404) {
+                    if (backup) {
+                        console.log(`Backup not completed. ${sse} not found in ${env}.`);
+                    } else {
+                        console.log(`${sse} not found in ${env}.`);
                     }
-                });
+                }
             });
 
-            if (backup) {
-                const date = new Date();
-                const timestamp = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}-${date.toISOString().substr(11, 8).replace(/\:/g, '')}`;
-                fs.copyFileSync(`${CONSTANTS.PATHS.SSE}/${sse}`, `${CONSTANTS.PATHS.SSE}/BKP-${env}-${timestamp}_${sse}`); 
+            if (response && response.data) {
+                if (!Methods.hasFolder()) {
+                    Methods.createFolder();
+                }
+    
+                const writer = fs.createWriteStream(`${CONSTANTS.PATHS.SSE}/${sse}`);
+                
+                await new Promise((resolve, reject) => {
+                    response.data.pipe(writer);
+                    let error = null;
+                    writer.on('error', err => {
+                        error = err;
+                        console.log('Download not completed. Please try again.');
+                        writer.close();
+                        reject(err);
+                    });
+                    writer.on('close', async () => {
+                        if (!error) {
+                            resolve(true);
+                        }
+                    });
+                });
+    
+                if (backup) {
+                    const date = new Date();
+                    const timestamp = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}-${date.toISOString().substr(11, 8).replace(/\:/g, '')}`;
+                    fs.copyFileSync(`${CONSTANTS.PATHS.SSE}/${sse}`, `${CONSTANTS.PATHS.SSE}/BKP-${env}-${timestamp}_${sse}`); 
+                }
             }
+            
         } else {
             console.log('SSE required to download.')
         }
@@ -160,31 +178,36 @@ const Methods = {
             sse = selectedSSE;
         }
 
-        console.log(`Making a backup copy for ${sse} from ${env}...`);
-        await Methods.get(sseType === 'zip' ? sse : `${sse}.zip`, true, env);
-
-        if (sseType === 'folder') {
-            console.log(`Zipping ${sse}...`);
-            await Methods.zip(sse);
-            sse = `${sse}.zip`;
+        if (sse) {
+            console.log(`Making a backup copy for ${sse} from ${env}...`);
+            await Methods.get(sseType === 'zip' ? sse : `${sse}.zip`, true, env);
+    
+            if (sseType === 'folder') {
+                console.log(`Zipping ${sse}...`);
+                await Methods.zip(sse);
+                sse = `${sse}.zip`;
+            }
+    
+            console.log(`Uploading ${sse} to ${env}, please wait. This may take a while...`);
+            const token = await auth.login(env);
+            const data = new FormData();
+            data.append('fileUpload', fs.createReadStream(`${CONSTANTS.PATHS.SSE}/${sse}`));
+            data.append('filename', sse);
+            data.append('uploadType', 'extensions');
+            data.append('force', 'true');
+            
+            const response = await ccAdminApi[env].post(CONSTANTS.ENDPOINT.SSE_UPLOAD, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    ...data.getHeaders(),
+                }
+            }).catch(err => {
+                console.log('SSE UPLOAD ERROR: \n', err.response.data);
+            });
+    
+            Methods.delete(`${sse}`);
         }
 
-        console.log(`Uploading ${sse} to ${env}...`);
-        const token = await auth.login(env);
-        const data = new FormData();
-        data.append('fileUpload', fs.createReadStream(`${CONSTANTS.PATHS.SSE}/${sse}`));
-        data.append('filename', sse);
-        data.append('uploadType', 'extensions');
-        data.append('force', 'true');
-        
-        console.log(data.getHeaders());
-        // ccAdminApi[env].post(CONSTANTS.ENDPOINT.SSE_UPLOAD, data, {
-        //     headers: {
-        //         Authorization: `Bearer ${token}`,
-        //     }
-        // });
-
-        Methods.delete(`${sse}`);
     },
 
     transfer: async (sse, targetEnv) => {
