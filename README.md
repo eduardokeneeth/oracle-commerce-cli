@@ -45,6 +45,7 @@ The following table describes the options you can use with `occ`.
 | `-p, --putAll <path>` | Sends everything from the specified directory. |
 | `-e, --env <operation>` | Starts the Environment Manager. <br><br> **Options:** `current`, `config`, `change`. |
 | `-t, --transfer <path>` | Transfers things between current and selected environment. |
+| `-x, --sse <operation>` | Starts the Server-side Extension Manager.<br><br> **Options:** `download`, `upload`, `transfer`. |
 | `-g, --grab <path>` | Starts grabbing everything from current environment. |
 
 # License
