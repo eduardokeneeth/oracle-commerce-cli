@@ -61,7 +61,7 @@ const Methods = {
             .map(dirent => dirent.name);
     },
 
-    get: async (sse, backup, env) => {
+    get: async (sse, isBackup, env) => {
         env = env || process.env.ACTIVE_ENV;
         
         if (sse) {
@@ -84,11 +84,13 @@ const Methods = {
             });
 
             if (response && response.data) {
+                const date = new Date();
+                const timestamp = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}-${date.toISOString().substr(11, 8).replace(/\:/g, '')}`;
+                const writer = fs.createWriteStream(isBackup ? `${CONSTANTS.PATHS.SSE}/BKP-${env}-${timestamp}_${sse}` : `${CONSTANTS.PATHS.SSE}/${sse}`);
+
                 if (!Methods.hasFolder()) {
                     Methods.createFolder();
                 }
-    
-                const writer = fs.createWriteStream(`${CONSTANTS.PATHS.SSE}/${sse}`);
                 
                 await new Promise((resolve, reject) => {
                     response.data.pipe(writer);
@@ -105,14 +107,7 @@ const Methods = {
                         }
                     });
                 });
-    
-                if (backup) {
-                    const date = new Date();
-                    const timestamp = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}-${date.toISOString().substr(11, 8).replace(/\:/g, '')}`;
-                    fs.copyFileSync(`${CONSTANTS.PATHS.SSE}/${sse}`, `${CONSTANTS.PATHS.SSE}/BKP-${env}-${timestamp}_${sse}`); 
-                }
-            }
-            
+            }          
         } else {
             console.log('SSE required to download.')
         }
@@ -171,7 +166,7 @@ const Methods = {
 
     upload: async (sse, env) => {
         env = env || process.env.ACTIVE_ENV;
-        const sseType = sse && sse.indexOf('.zip') !== -1 ? 'zip' : 'folder';
+        let sseType = sse && sse.indexOf('.zip') !== -1 ? 'zip' : 'folder';
 
         if (!sse) {
             const { selectedSSE } = await Methods.selector('local');
@@ -186,6 +181,7 @@ const Methods = {
                 console.log(`Zipping ${sse}...`);
                 await Methods.zip(sse);
                 sse = `${sse}.zip`;
+                sseType = 'zip';
             }
     
             console.log(`Uploading ${sse} to ${env}, please wait. This may take a while...`);
@@ -195,7 +191,7 @@ const Methods = {
             data.append('filename', sse);
             data.append('uploadType', 'extensions');
             data.append('force', 'true');
-            
+
             const response = await ccAdminApi[env].post(CONSTANTS.ENDPOINT.SSE_UPLOAD, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
