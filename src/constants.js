@@ -7,6 +7,7 @@ exports.CONSTANTS = {
         CCW: './DesignCodeUtility/ccwIndex.js',
     },
     ENDPOINT: {
+        ASSET_EXPORT: '/asset/export',
         LOGIN: '/login',
         SSE_LIST: '/serverExtensions',
         SSE_UPLOAD: '/serverExtensions',

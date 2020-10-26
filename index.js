@@ -7,6 +7,7 @@ const { dev } = require('./src/dev');
 const { occEnv } = require('./src/occEnv');
 const { dcu } = require('./src/dcu');
 const { ccw } = require('./src/ccw');
+const { catalog } = require('./src/catalog.js');
 const { sse } = require('./src/sse');
 
 program
@@ -20,6 +21,7 @@ program
   .option('-e, --env <operation>', 'start the environment manager [change|config|current]')
   .option('-t, --transfer <path>', 'transfer widgets between current and target environment')
   .option('-x, --sse <operation>', 'transfer SSE between current and target environment')
+  .option('-b, --catalog <operation>', 'catalog test')
   .option('-g, --grab', 'start grab on the current environment.')
   .parse(process.argv);
 
@@ -68,6 +70,17 @@ if (program.start) {
           break;
         case 'element':
           ccw.createElement();
+          break;
+      }
+    }
+
+    if (program.catalog) {
+      switch (program.catalog) {
+        case 'import':
+          catalog.importAsset();
+          break;
+        case 'export':
+          catalog.exportAssets();
           break;
       }
     }
