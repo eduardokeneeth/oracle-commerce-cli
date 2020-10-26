@@ -75,7 +75,7 @@ const Methods = {
                 responseType: 'stream',
             }).catch(err => {
                 if (err.response.status === 404) {
-                    if (backup) {
+                    if (isBackup) {
                         console.log(`Backup not completed. ${sse} not found in ${env}.`);
                     } else {
                         console.log(`${sse} not found in ${env}.`);
