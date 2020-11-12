@@ -8,9 +8,7 @@ const Methods = {
     const keys = Object.keys(obj);
     let file = '';
     keys.forEach(item => {
-      file += `
-        ${item}=${obj[item]}
-      `;
+      file += `${item}=${obj[item]}\n`;
     });
     return file;
   },
@@ -21,6 +19,10 @@ const Methods = {
 
   hasSrc: () => {
     return fs.existsSync('./src');
+  },
+
+  hasDCU: () => {
+    return fs.existsSync('./DesignCodeUtility');
   },
 
   createSrc: () => {
@@ -77,7 +79,7 @@ const Methods = {
       var { selectedEnv } = await Methods.selector();
       environment = selectedEnv;
     }
-    
+
     if (Methods.validate(environment)) {
       Methods.writeEnvFile({
         ACTIVE_ENV: environment,
@@ -146,6 +148,8 @@ const Methods = {
         envFile[item] = keysToUpdate[item] ? keysToUpdate[item] : process.env[item] || '';
       });
     }
+
+    process.env = {...process.env, ...envFile};
 
     fs.writeFileSync('.env', Methods.parseToEnvFile(envFile));
   }

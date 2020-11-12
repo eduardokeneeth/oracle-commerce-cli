@@ -18,6 +18,11 @@ const Methods = {
 
       occEnv.writeEnvFile(envFile);
 
+      if (!occEnv.hasDCU()) {
+        console.log('Download DCU...');
+        await dcu.download();
+      }
+
       if (!occEnv.hasSrc()) {
         console.log('Creating src folder...');
         occEnv.createSrc();
@@ -27,6 +32,12 @@ const Methods = {
         console.log('Your project is ready!');
       }
     } else {
+
+      // if (!occEnv.hasDCU()) {
+        console.log('Download DCU...');
+        await dcu.download();
+      // }
+
       console.log('.env found, delete it and try again.');
     }
   }
