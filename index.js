@@ -14,7 +14,7 @@ program
   .description('An application to help you with your daily OCC development.')
   .option('-s, --start', 'start the environment setup')
   .option('-d, --dev', 'start watcher + Browsersync')
-  .option('-c, --create <type>', 'create widget or element [widget|element]')
+  .option('-c, --create <type> <path>', 'create widget or element [widget|element|siteSettings|stack]')
   .option('-r, --refresh <path>', 'refresh path')
   .option('-p, --putAll <path>', 'upload the entire path')
   .option('-e, --env <operation>', 'start the environment manager [change|config|current]')
@@ -30,19 +30,19 @@ if (program.start) {
     if (program.dev) {
       dev.start();
     }
-    
+
     if(program.grab) {
       dcu.grab();
     }
-    
+
     if (program.refresh) {
       dcu.refresh(program.refresh);
     }
-    
+
     if (program.putAll) {
       dcu.putAll(program.putAll);
     }
-    
+
     if (program.transfer) {
       dcu.transfer(program.transfer);
     }
@@ -60,18 +60,23 @@ if (program.start) {
           break;
       }
     }
-    
+
     if (program.create) {
       switch (program.create) {
         case 'widget':
           ccw.createWidget();
           break;
         case 'element':
-          ccw.createElement();
+          ccw.createElement(program.args);
           break;
+        case 'siteSettings':
+          ccw.createSiteSettings();
+          break;
+        case 'stack':
+          ccw.createStack();
       }
     }
-    
+
     if (program.env) {
       switch (program.env) {
         case 'config':
