@@ -63,7 +63,7 @@ const Methods = {
 
     get: async (sse, isBackup, env) => {
         env = env || process.env.ACTIVE_ENV;
-        
+
         if (sse) {
             sse = sse.indexOf('.zip') !== -1 ? sse : `${sse}.zip`;
             const token = await auth.login(env);
@@ -76,9 +76,9 @@ const Methods = {
             }).catch(err => {
                 if (err.response.status === 404) {
                     if (isBackup) {
-                        console.log(`Backup not completed. ${sse} not found in ${env}.`);
+                        console.log(CONSTANTS.COLORS.ERROR, `Backup not completed. ${sse} not found in ${env}.`);
                     } else {
-                        console.log(`${sse} not found in ${env}.`);
+                        console.log(CONSTANTS.COLORS.ERROR, `${sse} not found in ${env}.`);
                     }
                 }
             });
@@ -91,13 +91,13 @@ const Methods = {
                 if (!Methods.hasFolder()) {
                     Methods.createFolder();
                 }
-                
+
                 await new Promise((resolve, reject) => {
                     response.data.pipe(writer);
                     let error = null;
                     writer.on('error', err => {
                         error = err;
-                        console.log('Download not completed. Please try again.');
+                        console.log(CONSTANTS.COLORS.ERROR, 'Download not completed. Please try again.');
                         writer.close();
                         reject(err);
                     });
@@ -107,9 +107,9 @@ const Methods = {
                         }
                     });
                 });
-            }          
+            }
         } else {
-            console.log('SSE required to download.')
+            console.log(CONSTANTS.COLORS.ERROR, 'SSE required to download.')
         }
     },
 
@@ -118,7 +118,7 @@ const Methods = {
             if (sse) {
                 fs.unlinkSync(`${CONSTANTS.PATHS.SSE}/${sse}`);
             } else {
-                console.log('SSE required to delete.')
+                console.log(CONSTANTS.COLORS.ERROR, 'SSE required to delete.')
             }
         } else {
             console.log('occ CLI only deletes .zip files.');
@@ -144,7 +144,7 @@ const Methods = {
         if (sse) {
             await extract(`${CONSTANTS.PATHS.SSE}/${sse}`, { dir: `${process.cwd()}/${CONSTANTS.PATHS.SSE}/${sse.replace('.zip', '')}` });
         } else {
-            console.log('SSE required to extract.')
+            console.log(CONSTANTS.COLORS.ERROR, 'SSE required to extract.')
         }
     },
 
@@ -153,13 +153,13 @@ const Methods = {
             const { selectedSSE } = await Methods.selector('server');
             sse = selectedSSE;
         }
-        
+
         console.log(`Downloading: ${sse}`);
         await Methods.get(sse);
-        
+
         console.log(`Extracting: ${sse}`);
         await Methods.unzip(sse);
-        
+
         console.log(`Deleting: ${sse}`);
         Methods.delete(sse);
     },
@@ -176,14 +176,13 @@ const Methods = {
         if (sse) {
             console.log(`Making a backup copy for ${sse} from ${env}...`);
             await Methods.get(sseType === 'zip' ? sse : `${sse}.zip`, true, env);
-    
+
             if (sseType === 'folder') {
                 console.log(`Zipping ${sse}...`);
                 await Methods.zip(sse);
                 sse = `${sse}.zip`;
-                sseType = 'zip';
             }
-    
+
             console.log(`Uploading ${sse} to ${env}, please wait. This may take a while...`);
             const token = await auth.login(env);
             const data = new FormData();
@@ -198,9 +197,9 @@ const Methods = {
                     ...data.getHeaders(),
                 }
             }).catch(err => {
-                console.log('SSE UPLOAD ERROR: \n', err.response.data);
+                console.log(CONSTANTS.COLORS.ERROR, 'SSE UPLOAD ERROR: \n', err.response.data);
             });
-    
+
             Methods.delete(`${sse}`);
         }
 
@@ -218,7 +217,7 @@ const Methods = {
                     const { selectedSSE } = await Methods.selector('server');
                     sse = selectedSSE;
                 }
-    
+
                 const { confirm } = await inquirer.prompt([{
                     type: 'confirm',
                     name: 'confirm',
@@ -230,12 +229,12 @@ const Methods = {
                     await Methods.get(sse);
                     await Methods.upload(sse, targetEnv);
                 }
-                
+
             } else {
-                console.log(`${targetEnv} is not configured.`);
+                console.log(CONSTANTS.COLORS.ERROR, `${targetEnv} is not configured.`);
             }
         } else {
-            console.log(`Target environment can't be equal to current.`);
+            console.log(CONSTANTS.COLORS.ERROR, `Target environment can't be equal to current.`);
         }
     },
 

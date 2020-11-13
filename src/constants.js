@@ -3,11 +3,13 @@ exports.CONSTANTS = {
     COLORS: {
         TITLE: '\x1b[33m\x1b[1m%s\x1b[0m',
         SUCCESS: '\x1b[32m\x1b[1m%s\x1b[0m',
+        ERROR: '\x1b[31m\x1b[1m%s\x1b[0m',
     },
     FILES: {
         DCU_ZIP: './DesignCodeUtility.zip',
         DCU: './DesignCodeUtility/dcuIndex.js',
         CCW: './DesignCodeUtility/ccwIndex.js',
+        PLSU: './DesignCodeUtility/plsuIndex.js',
     },
     PATHS: {
         SRC: './src',

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const fs = require('fs');
 const childProcess = require('child_process');
 const { CONSTANTS } = require('./constants');
 
@@ -8,8 +9,13 @@ const Methods = {
     createWidget: () => {
         childProcess.execSync(`${CCW_BASE_COMMAND} -w`, { stdio: 'inherit' });
     },
-    createElement: () => {
-        childProcess.execSync(`${CCW_BASE_COMMAND} -e`, { stdio: 'inherit' });
+    createElement: (args) => {
+        const path = args[0] ? args[0] : null;
+        if(path && !fs.existsSync(path)) {
+            console.log(CONSTANTS.COLORS.ERROR, 'No such directory');
+            return;
+        }
+        childProcess.execSync(`${CCW_BASE_COMMAND} -e ${path}`, { stdio: 'inherit' });
     },
     createSiteSettings: () => {
         childProcess.execSync(`${CCW_BASE_COMMAND} -t`, { stdio: 'inherit' });

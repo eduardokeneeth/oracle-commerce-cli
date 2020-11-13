@@ -14,7 +14,7 @@ program
   .description('An application to help you with your daily OCC development.')
   .option('-s, --start', 'start the environment setup')
   .option('-d, --dev', 'start watcher + Browsersync')
-  .option('-c, --create <type> --dir <path>', 'create widget or element [widget|element|siteSettings|stack]')
+  .option('-c, --create <type> <path>', 'create widget or element [widget|element|siteSettings|stack]')
   .option('-r, --refresh <path>', 'refresh path')
   .option('-p, --putAll <path>', 'upload the entire path')
   .option('-e, --env <operation>', 'start the environment manager [change|config|current]')
@@ -62,13 +62,12 @@ if (program.start) {
     }
 
     if (program.create) {
-      console.log(program.dir);
       switch (program.create) {
         case 'widget':
           ccw.createWidget();
           break;
         case 'element':
-          ccw.createElement();
+          ccw.createElement(program.args);
           break;
         case 'siteSettings':
           ccw.createSiteSettings();

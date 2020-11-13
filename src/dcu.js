@@ -17,9 +17,9 @@ const Methods =  {
             responseType: 'stream',
         }).catch(err => {
             if (err.response.status === 404) {
-                console.log(`Design Code Utility not found in ${env}.`);
+                console.log(CONSTANTS.COLORS.ERROR, `Design Code Utility not found in ${env}.`);
             } else {
-                console.log(`Design Code Utility error in ${env}.`);
+                console.log(CONSTANTS.COLORS.ERROR, `Design Code Utility error in ${env}.`);
             }
         });
 
@@ -30,7 +30,7 @@ const Methods =  {
                 let error = null;
                 writer.on('error', err => {
                     error = err;
-                    console.log('Download not completed. Please try again.');
+                    console.log(CONSTANTS.COLORS.ERROR, 'Download not completed. Please try again.');
                     writer.close();
                     reject(err);
                 });
@@ -45,14 +45,14 @@ const Methods =  {
 
     download: async () => {
         if (fs.existsSync(CONSTANTS.FILES.DCU_ZIP)) {
-            console.log(`🗑️  Delete: DCU`);
+            console.log(`Delete: DCU`);
             await Methods.delete();
         }
 
-        console.log(`🤟 Downloading: DCU`);
+        console.log(`Downloading: DCU`);
         await Methods.get();
 
-        console.log(`🤖 Extracting: DCU`);
+        console.log(`Extracting: DCU`);
         await Methods.unzip();
 
         console.log(`Install: DCU`);
@@ -63,7 +63,7 @@ const Methods =  {
         if (fs.existsSync(CONSTANTS.FILES.DCU_ZIP)) {
             await extract(CONSTANTS.FILES.DCU_ZIP, { dir: `${process.cwd()}/${CONSTANTS.PATHS.DCU}` });
         } else {
-            console.log('DCU required to extract.')
+            console.log(CONSTANTS.COLORS.ERROR, 'DCU required to extract.')
         }
     },
 
@@ -75,7 +75,8 @@ const Methods =  {
             shell.exec(`npm i`, {
                 async: false,
             }, () => {
-                console.log('Installed: DCU')
+                fs.chmodSync(process.cwd(), 0o755);
+                console.log(CONSTANTS.COLORS.SUCCESS, 'Installed: DCU')
                 resolve(true);
             });
         });
@@ -124,7 +125,7 @@ const Methods =  {
                 async: false,
             });
         } else {
-            console.log(`${selectedEnv} is not configured.`);
+            console.log(CONSTANTS.COLORS.ERROR, `${selectedEnv} is not configured.`);
         }
     }
 };
