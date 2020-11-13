@@ -29,6 +29,16 @@ const Methods = {
     return fs.mkdirSync(CONSTANTS.PATHS.SRC);
   },
 
+  confirm: message => {
+    return inquirer
+        .prompt([{
+          type: 'list',
+          name: 'selectedEnv',
+          message: message || 'Refresh SRC path:',
+          choices: ['YES', 'NO'],
+        }]);
+  },
+
   selector: message => {
     return inquirer
       .prompt([{

@@ -77,6 +77,7 @@ const Methods =  {
             }, () => {
                 fs.chmodSync(process.cwd(), 0o755);
                 console.log(CONSTANTS.COLORS.SUCCESS, 'Installed: DCU')
+                shell.cd('..', { async: false });
                 resolve(true);
             });
         });
