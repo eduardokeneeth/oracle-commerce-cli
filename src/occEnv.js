@@ -18,15 +18,15 @@ const Methods = {
   },
 
   hasSrc: () => {
-    return fs.existsSync('./src');
+    return fs.existsSync(CONSTANTS.PATHS.SRC);
   },
 
   hasDCU: () => {
-    return fs.existsSync('./DesignCodeUtility');
+    return fs.existsSync(CONSTANTS.PATHS.DCU);
   },
 
   createSrc: () => {
-    return fs.mkdirSync('./src');
+    return fs.mkdirSync(CONSTANTS.PATHS.SRC);
   },
 
   selector: message => {

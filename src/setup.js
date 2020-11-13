@@ -1,6 +1,6 @@
-const fs = require('fs');
 const { occEnv } = require('./occEnv');
 const { dcu } = require('./dcu');
+const { CONSTANTS } = require('./constants');
 
 const Methods = {
   start: async () => {
@@ -19,22 +19,22 @@ const Methods = {
       occEnv.writeEnvFile(envFile);
 
       if (!occEnv.hasDCU()) {
-        console.log('Download DCU...');
+        console.log(CONSTANTS.COLORS.TITLE, 'Download DCU...');
         await dcu.download();
       }
 
-      if (!occEnv.hasSrc()) {
-        console.log('Creating src folder...');
+      // if (!occEnv.hasSrc()) {
+        console.log(CONSTANTS.COLORS.TITLE, 'Creating src folder...');
         occEnv.createSrc();
-        console.log('Grabbing your files, please wait.');
+        console.log(CONSTANTS.COLORS.TITLE, 'Grabbing your files, please wait.');
         dcu.grab(adminUrl, appKey);
-      } else {
-        console.log('Your project is ready!');
-      }
+      // } else {
+        console.log(CONSTANTS.COLORS.SUCCESS, 'Your project is ready!');
+      // }
     } else {
 
       // if (!occEnv.hasDCU()) {
-        console.log('Download DCU...');
+        console.log(CONSTANTS.COLORS.TITLE, 'Download DCU...');
         await dcu.download();
       // }
 

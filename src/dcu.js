@@ -6,8 +6,7 @@ const shell = require('shelljs');
 const { CONSTANTS } = require('./constants');
 const { occEnv } = require('./occEnv');
 
-const dcu = 'DesignCodeUtility';
-const DCU_BASE_COMMAND = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${process.env.OCC_ADMIN_URL} -k ${process.env.OCC_APP_KEY}`;
+const DCU_BASE_COMMAND = `node ${CONSTANTS.FILES.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${process.env.OCC_ADMIN_URL} -k ${process.env.OCC_APP_KEY}`;
 
 const Methods =  {
 
@@ -26,7 +25,7 @@ const Methods =  {
 
         return new Promise((resolve, reject) => {
             if (response && response.data) {
-                const writer = fs.createWriteStream(CONSTANTS.FILES.DCU);
+                const writer = fs.createWriteStream(CONSTANTS.FILES.DCU_ZIP);
                 response.data.pipe(writer);
                 let error = null;
                 writer.on('error', err => {
@@ -45,15 +44,15 @@ const Methods =  {
     },
 
     download: async () => {
-        if (fs.existsSync(CONSTANTS.FILES.DCU)) {
-            console.log(`Delete: DCU`);
+        if (fs.existsSync(CONSTANTS.FILES.DCU_ZIP)) {
+            console.log(`🗑️  Delete: DCU`);
             await Methods.delete();
         }
 
-        console.log(`Downloading: DCU`);
+        console.log(`🤟 Downloading: DCU`);
         await Methods.get();
 
-        console.log(`Extracting: DCU`);
+        console.log(`🤖 Extracting: DCU`);
         await Methods.unzip();
 
         console.log(`Install: DCU`);
@@ -61,8 +60,8 @@ const Methods =  {
     },
 
     unzip: async () => {
-        if (fs.existsSync(CONSTANTS.FILES.DCU)) {
-            await extract(CONSTANTS.FILES.DCU, { dir: `${process.cwd()}/${dcu}` });
+        if (fs.existsSync(CONSTANTS.FILES.DCU_ZIP)) {
+            await extract(CONSTANTS.FILES.DCU_ZIP, { dir: `${process.cwd()}/${CONSTANTS.PATHS.DCU}` });
         } else {
             console.log('DCU required to extract.')
         }
@@ -70,7 +69,7 @@ const Methods =  {
 
     install: async () => {
         return new Promise((resolve) => {
-            shell.cd(`./${dcu}`, {
+            shell.cd(CONSTANTS.PATHS.DCU, {
                 async: false,
             });
             shell.exec(`npm i`, {
@@ -83,13 +82,14 @@ const Methods =  {
     },
 
     delete: async () => {
-        fs.rmdirSync(`./${dcu}`, { recursive: true });
+        fs.unlinkSync(CONSTANTS.FILES.DCU_ZIP);
+        fs.rmdirSync(CONSTANTS.PATHS.DCU, { recursive: true });
     },
 
     grab: (adminUrl, appKey) => {
         var finalShellScript = `${DCU_BASE_COMMAND} -g -c`;
         if (adminUrl && appKey) {
-            finalShellScript = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${adminUrl} -k ${appKey} -c -g`
+            finalShellScript = `node ${CONSTANTS.FILES.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${adminUrl} -k ${appKey} -c -g`
         }
         shell.exec(finalShellScript, {
             async: false
@@ -119,7 +119,7 @@ const Methods =  {
 
         if (occEnv.validate(selectedEnv)) {
             const { url, appKey } = occEnv.get(selectedEnv);
-            finalShellScript = `node ${CONSTANTS.PATHS.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${url} -k ${appKey} -x "${path}" -o`;
+            finalShellScript = `node ${CONSTANTS.FILES.DCU} -b ${CONSTANTS.PATHS.SRC} -n ${url} -k ${appKey} -x "${path}" -o`;
             shell.exec(finalShellScript, {
                 async: false,
             });
